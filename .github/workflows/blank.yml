@@ -17,6 +17,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Android SDK and tools
+        uses: malinskiy/action-android@v2
+        with:
+          api-level: 35
+          build-tools: 35.0.0
+          components: platform-tools,cmdline-tools
+
       - name: Install Android SDK command-line tools (robust)
         run: |
           set -euo pipefail
