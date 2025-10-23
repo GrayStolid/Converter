@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
-
+      ANDROID_SDK_ROOT: ${{ runner.home }}/android-sdk
+      PATH: ${{ runner.home }}/android-sdk/cmdline-tools/latest/bin:${{ runner.home }}/android-sdk/platform-tools:${{ env.PATH }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
