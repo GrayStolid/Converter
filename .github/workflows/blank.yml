@@ -10,81 +10,67 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
-      # Use workspace as base for SDK storage
-      ANDROID_SDK_WORKDIR: ${{ github.workspace }}/android-sdk
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Android SDK and tools
-        uses: malinskiy/action-android@v2
-        with:
-          api-level: 35
-          build-tools: 35.0.0
-          components: platform-tools,cmdline-tools
-
-      - name: Install Android SDK command-line tools (robust)
-        run: |
-          set -euo pipefail
-      
-          SDK_ROOT="$GITHUB_WORKSPACE/android-sdk"
-          mkdir -p "$SDK_ROOT/cmdline-tools"
-          REPO_XML="https://dl.google.com/android/repository/repository2-1.xml"
-      
-          echo "Fetching repository index..."
-          curl -sSfL "$REPO_XML" -o repo.xml
-      
-          echo "Searching for commandlinetools-linux URL (multiple patterns)..."
-          # Try several extraction patterns; first successful wins
-          URL=""
-          URL=$(grep -oP '(?<=<url>)[^<]*commandlinetools-linux[^<]*\.zip(?=</url>)' repo.xml | head -n 1 || true)
-          if [ -z "$URL" ]; then
-            URL=$(grep -oP 'https?://[^<]*commandlinetools-linux[^<]*\.zip' repo.xml | head -n 1 || true)
-          fi
-          if [ -z "$URL" ]; then
-            URL=$(grep -oP '(?<=<downloadUrl>)[^<]*commandlinetools-linux[^<]*\.zip(?=</downloadUrl>)' repo.xml | head -n 1 || true)
-          fi
-      
-          if [ -z "$URL" ]; then
-            echo "No commandlinetools URL found in repository XML, aborting."
-            exit 1
-          fi
-      
-          # Normalize relative URL if necessary
-          if [[ "$URL" != http* ]]; then
-            URL="https://dl.google.com/android/repository/${URL#./}"
-          fi
-      
-          echo "Downloading command line tools from: $URL"
-          wget -q --show-progress -O cmdline-tools.zip "$URL"
-      
-          unzip -q cmdline-tools.zip -d cmdline-tools
-          rm cmdline-tools.zip
-      
-          mkdir -p "$SDK_ROOT/cmdline-tools/latest"
-          mv cmdline-tools/* "$SDK_ROOT/cmdline-tools/latest/" 2>/dev/null || true
-          rmdir cmdline-tools 2>/dev/null || true
-      
-          export ANDROID_SDK_ROOT="$SDK_ROOT"
-          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
-      
-          yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses
-          sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
-      
-          # Persist for later steps
-          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> $GITHUB_ENV
-          echo "PATH=$SDK_ROOT/cmdline-tools/latest/bin:$SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
-        shell: bash
-        env:
-          GITHUB_WORKSPACE: ${{ github.workspace }}
-
-          
       - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
+
+      - name: Install Android SDK command-line tools and components
+        id: sdk
+        run: |
+          set -euo pipefail
+
+          SDK_ROOT="$GITHUB_WORKSPACE/android-sdk"
+          mkdir -p "$SDK_ROOT/cmdline-tools"
+          REPO_XML="https://dl.google.com/android/repository/repository2-1.xml"
+
+          echo "Fetching repository index..."
+          curl -sSfL "$REPO_XML" -o repo.xml
+
+          echo "Searching for commandlinetools-linux URL..."
+          URL=""
+          URL=$(grep -oP '(?<=<url>)[^<]*commandlinetools-linux[^<]*\.zip(?=</url>)' repo.xml | head -n 1 || true)
+          URL=${URL:-$(grep -oP 'https?://[^<]*commandlinetools-linux[^<]*\.zip' repo.xml | head -n 1 || true)}
+          URL=${URL:-$(grep -oP '(?<=<downloadUrl>)[^<]*commandlinetools-linux[^<]*\.zip(?=</downloadUrl>)' repo.xml | head -n 1 || true)}
+
+          if [ -z "$URL" ]; then
+            echo "No commandlinetools URL found in repository XML, aborting."
+            exit 1
+          fi
+
+          if [[ "$URL" != http* ]]; then
+            URL="https://dl.google.com/android/repository/${URL#./}"
+          fi
+
+          echo "Downloading command line tools from: $URL"
+          wget -q --show-progress -O cmdline-tools.zip "$URL"
+          unzip -q cmdline-tools.zip -d cmdline-tools
+          rm cmdline-tools.zip
+
+          mkdir -p "$SDK_ROOT/cmdline-tools/latest"
+          mv cmdline-tools/* "$SDK_ROOT/cmdline-tools/latest/" 2>/dev/null || true
+          rmdir cmdline-tools 2>/dev/null || true
+
+          # Use sdkmanager from the installed location to avoid PATH issues
+          SDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          chmod +x "$SDKMANAGER"
+
+          yes | "$SDKMANAGER" --sdk_root="$SDK_ROOT" --licenses
+          "$SDKMANAGER" --sdk_root="$SDK_ROOT" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+          # Persist for subsequent steps
+          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> $GITHUB_ENV
+          echo "PATH=$SDK_ROOT/cmdline-tools/latest/bin:$SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
+
+        shell: bash
+        env:
+          GITHUB_WORKSPACE: ${{ github.workspace }}
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -92,8 +78,29 @@ jobs:
           flutter-version: '3.29.2'
           channel: 'stable'
 
-      - name: Get packages
+      - name: Accept Android licenses (verify)
+        run: yes | flutter doctor --android-licenses || true
+
+      - name: Get Flutter packages
         run: flutter pub get
 
       - name: Build APK (debug)
         run: flutter build apk --debug --no-shrink -v
+
+      - name: Collect APK and engine AARs
+        run: |
+          mkdir -p artifacts
+          cp build/app/outputs/flutter-apk/app-debug.apk artifacts/ || true
+          # Collect any .aar files produced in the Flutter engine cache
+          if [ -d "$FLUTTER_ROOT/bin/cache/artifacts/engine" ]; then
+            find "$FLUTTER_ROOT/bin/cache/artifacts/engine" -type f -name "*.aar" -print > aars_list.txt || true
+            if [ -s aars_list.txt ]; then
+              tar -czf artifacts/aars.tgz -T aars_list.txt || true
+            fi
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-apk-and-aars
+          path: artifacts
