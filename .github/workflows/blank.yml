@@ -25,52 +25,67 @@ jobs:
         id: sdk
         run: |
           set -euo pipefail
-
           SDK_ROOT="$GITHUB_WORKSPACE/android-sdk"
-          mkdir -p "$SDK_ROOT/cmdline-tools"
+          mkdir -p "$SDK_ROOT"
           REPO_XML="https://dl.google.com/android/repository/repository2-1.xml"
-
+      
           echo "Fetching repository index..."
           curl -sSfL "$REPO_XML" -o repo.xml
-
-          echo "Searching for commandlinetools-linux URL..."
+      
+          echo "Locating commandlinetools-linux ZIP URL..."
           URL=""
-          URL=$(grep -oP '(?<=<url>)[^<]*commandlinetools-linux[^<]*\.zip(?=</url>)' repo.xml | head -n 1 || true)
-          URL=${URL:-$(grep -oP 'https?://[^<]*commandlinetools-linux[^<]*\.zip' repo.xml | head -n 1 || true)}
-          URL=${URL:-$(grep -oP '(?<=<downloadUrl>)[^<]*commandlinetools-linux[^<]*\.zip(?=</downloadUrl>)' repo.xml | head -n 1 || true)}
-
+          URL=$(grep -oP '(?<=<url>)[^<]*commandlinetools-linux[^<]*\.zip(?=</url>)' repo.xml | head -n1 || true)
+          URL=${URL:-$(grep -oP 'https?://[^<]*commandlinetools-linux[^<]*\.zip' repo.xml | head -n1 || true)}
+          URL=${URL:-$(grep -oP '(?<=<downloadUrl>)[^<]*commandlinetools-linux[^<]*\.zip(?=</downloadUrl>)' repo.xml | head -n1 || true)}
+      
           if [ -z "$URL" ]; then
             echo "No commandlinetools URL found in repository XML, aborting."
             exit 1
           fi
-
+      
           if [[ "$URL" != http* ]]; then
             URL="https://dl.google.com/android/repository/${URL#./}"
           fi
-
+      
           echo "Downloading command line tools from: $URL"
-          wget -q --show-progress -O cmdline-tools.zip "$URL"
-          unzip -q cmdline-tools.zip -d cmdline-tools
-          rm cmdline-tools.zip
-
+          TMP_DIR="$(mktemp -d)"
+          wget -q --show-progress -O "$TMP_DIR/cmdline-tools.zip" "$URL"
+          unzip -q "$TMP_DIR/cmdline-tools.zip" -d "$TMP_DIR"
+          rm "$TMP_DIR/cmdline-tools.zip"
+      
+          # Inspect extraction layout and move contents into expected layout: cmdline-tools/latest/...
+          # Many ZIPs contain a top-level folder like 'cmdline-tools' or 'commandlinetools'
+          EXTRACTED_DIR=$(find "$TMP_DIR" -maxdepth 1 -mindepth 1 -type d | head -n 1)
+          if [ -z "$EXTRACTED_DIR" ]; then
+            echo "Extraction failed or unexpected layout"; ls -la "$TMP_DIR"; exit 1
+          fi
+      
           mkdir -p "$SDK_ROOT/cmdline-tools/latest"
-          mv cmdline-tools/* "$SDK_ROOT/cmdline-tools/latest/" 2>/dev/null || true
-          rmdir cmdline-tools 2>/dev/null || true
-
-          # Use sdkmanager from the installed location to avoid PATH issues
-          SDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
-          chmod +x "$SDKMANAGER"
-
-          yes | "$SDKMANAGER" --sdk_root="$SDK_ROOT" --licenses
-          "$SDKMANAGER" --sdk_root="$SDK_ROOT" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
-
+          # Copy everything from extracted dir into latest
+          cp -R "$EXTRACTED_DIR"/* "$SDK_ROOT/cmdline-tools/latest/" || true
+          rm -rf "$TMP_DIR"
+      
+          # Search for sdkmanager in the installed tree
+          SDKMANAGER_PATH=$(find "$SDK_ROOT" -type f -name "sdkmanager" -print -quit || true)
+          if [ -z "$SDKMANAGER_PATH" ]; then
+            echo "sdkmanager not found after extraction. Listing $SDK_ROOT for debugging:"; ls -R "$SDK_ROOT"
+            exit 1
+          fi
+          echo "Using sdkmanager at: $SDKMANAGER_PATH"
+          chmod +x "$SDKMANAGER_PATH"
+      
+          # Use sdkmanager binary directly to avoid PATH timing issues
+          yes | "$SDKMANAGER_PATH" --sdk_root="$SDK_ROOT" --licenses
+          "$SDKMANAGER_PATH" --sdk_root="$SDK_ROOT" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+      
           # Persist for subsequent steps
           echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> $GITHUB_ENV
           echo "PATH=$SDK_ROOT/cmdline-tools/latest/bin:$SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
-
+      
         shell: bash
         env:
           GITHUB_WORKSPACE: ${{ github.workspace }}
+
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
