@@ -28,26 +28,33 @@ jobs:
           echo "Fetching repository index..."
           curl -sSfL "$REPO_XML" -o repo.xml
       
-          echo "Parsing for latest Linux commandlinetools URL..."
-          URL=$(grep -oP '(?<=<url>).+commandlinetools-linux[^<]+_latest.zip(?=</url>)' repo.xml | head -n 1)
+          echo "Searching for commandlinetools-linux URL (multiple patterns)..."
+          # Try several extraction patterns; first successful wins
+          URL=""
+          URL=$(grep -oP '(?<=<url>)[^<]*commandlinetools-linux[^<]*\.zip(?=</url>)' repo.xml | head -n 1 || true)
+          if [ -z "$URL" ]; then
+            URL=$(grep -oP 'https?://[^<]*commandlinetools-linux[^<]*\.zip' repo.xml | head -n 1 || true)
+          fi
+          if [ -z "$URL" ]; then
+            URL=$(grep -oP '(?<=<downloadUrl>)[^<]*commandlinetools-linux[^<]*\.zip(?=</downloadUrl>)' repo.xml | head -n 1 || true)
+          fi
       
           if [ -z "$URL" ]; then
-            echo "Failed to find commandlinetools URL in repository XML, aborting."
+            echo "No commandlinetools URL found in repository XML, aborting."
             exit 1
           fi
       
-          # If URL is relative, prefix with dl.google.com
+          # Normalize relative URL if necessary
           if [[ "$URL" != http* ]]; then
             URL="https://dl.google.com/android/repository/${URL#./}"
           fi
       
-          echo "Downloading: $URL"
+          echo "Downloading command line tools from: $URL"
           wget -q --show-progress -O cmdline-tools.zip "$URL"
       
           unzip -q cmdline-tools.zip -d cmdline-tools
           rm cmdline-tools.zip
       
-          # Move into expected layout: cmdline-tools/latest/...
           mkdir -p "$SDK_ROOT/cmdline-tools/latest"
           mv cmdline-tools/* "$SDK_ROOT/cmdline-tools/latest/" 2>/dev/null || true
           rmdir cmdline-tools 2>/dev/null || true
@@ -58,9 +65,13 @@ jobs:
           yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses
           sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
       
+          # Persist for later steps
+          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> $GITHUB_ENV
+          echo "PATH=$SDK_ROOT/cmdline-tools/latest/bin:$SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
         shell: bash
         env:
           GITHUB_WORKSPACE: ${{ github.workspace }}
+
           
       - name: Setup JDK 17
         uses: actions/setup-java@v4
