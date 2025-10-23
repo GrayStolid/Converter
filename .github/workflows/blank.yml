@@ -47,7 +47,7 @@ jobs:
           sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
         shell: bash
         env:
-          HOME: ${{ runner.home 
+          HOME: ${{ runner.home }}
       - name: Get packages
         run: flutter pub get
 
