@@ -1,0 +1,107 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { stream ->
+        localProperties.load(stream)
+    }
+}
+
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+android {
+    namespace "com.mycompany.sendcoordinate"
+    compileSdkVersion 35
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+        doNotStrip "*/arm64-v8a/libpython*.so"
+        doNotStrip "*/armeabi-v7a/libpython*.so"
+        doNotStrip "*/x86/libpython*.so"
+        doNotStrip "*/x86_64/libpython*.so"
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    
+    
+
+    defaultConfig {        
+        applicationId "com.mycompany.sendcoordinate"
+        minSdkVersion 24
+        targetSdkVersion 35
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+
+        println("Gradle build config:")
+        println("  minSdkVersion: 24")
+        println("  targetSdkVersion: $flutter.targetSdkVersion")
+        println("  versionCode: $flutter.versionCode")
+        println("  versionName: $flutter.versionName")
+
+// flet: split_per_abi 
+    }
+
+// flet: android_signing 
+
+    buildTypes {
+        release {
+// flet: android_signing 
+            signingConfig signingConfigs.debug
+// flet: end of android_signing 
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+repositories {
+        google()
+        mavenCentral()
+
+        // Local Flutter engine artifacts (use this so flutter_embedding* resolves locally)
+        maven { url uri(System.getenv("FLUTTER_ROOT") + "/bin/cache/artifacts/engine/android") }
+
+        // Optional fallback mirrors you trust (keep after mavenCentral)
+        maven { url 'https://storage.googleapis.com/download.flutter.io' }
+        maven { url 'https://storage.flutter-io.cn/download.flutter.io' } // China mirror, optional
+
+        // Other mirrors you may use (move them after the above)
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.myket.ir' }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+}

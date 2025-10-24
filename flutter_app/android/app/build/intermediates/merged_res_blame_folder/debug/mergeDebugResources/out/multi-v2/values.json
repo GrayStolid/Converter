@@ -1,0 +1,38 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.mycompany.sendcoordinate.app-mergeDebugResources-2:/values/values.xml",
+            "map": [
+                {
+                    "source": "F:\\Projects\\Python\\Learning\\Flet\\SendCoordinate\\build\\flutter\\android\\app\\src\\main\\res\\values\\styles.xml",
+                    "from": {
+                        "startLines": "3,18",
+                        "startColumns": "4,4",
+                        "startOffsets": "173,1095",
+                        "endLines": "11,20",
+                        "endColumns": "12,12",
+                        "endOffsets": "748,1259"
+                    },
+                    "to": {
+                        "startLines": "3,11",
+                        "startColumns": "4,4",
+                        "startOffsets": "112,564",
+                        "endLines": "10,13",
+                        "endColumns": "12,12",
+                        "endOffsets": "559,728"
+                    }
+                },
+                {
+                    "source": "F:\\Projects\\Python\\Learning\\Flet\\SendCoordinate\\build\\flutter\\android\\app\\src\\main\\res\\values\\colors.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "56",
+                        "endOffsets": "107"
+                    }
+                }
+            ]
+        }
+    ]
+}

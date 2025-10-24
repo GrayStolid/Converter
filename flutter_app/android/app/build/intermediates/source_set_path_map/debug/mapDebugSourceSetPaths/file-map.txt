@@ -1,0 +1,7 @@
+com.mycompany.sendcoordinate.app-pngs-0 F:\Projects\Python\Learning\Flet\SendCoordinate\build\flutter\android\app\build\generated\res\pngs\debug
+com.mycompany.sendcoordinate.app-resValues-1 F:\Projects\Python\Learning\Flet\SendCoordinate\build\flutter\android\app\build\generated\res\resValues\debug
+com.mycompany.sendcoordinate.app-packageDebugResources-2 F:\Projects\Python\Learning\Flet\SendCoordinate\build\flutter\android\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.mycompany.sendcoordinate.app-packageDebugResources-3 F:\Projects\Python\Learning\Flet\SendCoordinate\build\flutter\android\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.mycompany.sendcoordinate.app-debug-4 F:\Projects\Python\Learning\Flet\SendCoordinate\build\flutter\android\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.mycompany.sendcoordinate.app-debug-5 F:\Projects\Python\Learning\Flet\SendCoordinate\build\flutter\android\app\src\debug\res
+com.mycompany.sendcoordinate.app-main-6 F:\Projects\Python\Learning\Flet\SendCoordinate\build\flutter\android\app\src\main\res

@@ -1,0 +1,1 @@
+F:\Projects\Python\Learning\Flet\SendCoordinate\build\flutter\android\app\build\intermediates\cxx\Debug\1j33in6h\obj\arm64-v8a

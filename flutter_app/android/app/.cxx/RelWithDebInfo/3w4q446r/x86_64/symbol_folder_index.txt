@@ -1,0 +1,1 @@
+F:\Projects\Python\Learning\Flet\SendCoordinate\build\flutter\android\app\build\intermediates\cxx\RelWithDebInfo\3w4q446r\obj\x86_64
