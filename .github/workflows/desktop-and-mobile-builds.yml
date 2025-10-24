@@ -70,7 +70,7 @@ jobs:
     - name: Upload Linux Artifact
       uses: actions/upload-artifact@v4.3.4
       with:
-        name: ${{ PROJECT_NAME }}_Linux_V${{ BUILD_VERSION }}
+        name: ${{ env.PROJECT_NAME }}_Linux_V${{ env.BUILD_VERSION }}
         path: linux.zip
         if-no-files-found: warn
         overwrite: false
@@ -102,7 +102,7 @@ jobs:
     - name: Upload macOS artifact
       uses: actions/upload-artifact@v4.3.4
       with:
-        name: ${{ PROJECT_NAME }}_macOS_V${{ BUILD_VERSION }}
+        name: ${{ env.PROJECT_NAME }}_macOS_V${{ env.BUILD_VERSION }}
         path: macOS.zip
         if-no-files-found: warn
         overwrite: false
@@ -134,7 +134,7 @@ jobs:
     - name: Upload Windows Artifact
       uses: actions/upload-artifact@v4.3.4
       with:
-        name: ${{ PROJECT_NAME }}_Windows_V${{ BUILD_VERSION }}
+        name: ${{ env.PROJECT_NAME }}_Windows_V${{ env.BUILD_VERSION }}
         path: windows.zip
         if-no-files-found: warn
         overwrite: false
@@ -166,7 +166,7 @@ jobs:
     - name: Upload AAB Artifact
       uses: actions/upload-artifact@v4.3.4
       with:
-        name: ${{ PROJECT_NAME }}_AAB_V${{ BUILD_VERSION }}
+        name: ${{ env.PROJECT_NAME }}_AAB_V${{ env.BUILD_VERSION }}
         path: aab.zip
         if-no-files-found: warn
         overwrite: false
@@ -198,7 +198,7 @@ jobs:
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4.3.4
       with:
-        name: ${{ PROJECT_NAME }}_APK_V${{ BUILD_VERSION }}
+        name: ${{ env.PROJECT_NAME }}_APK_V${{ env.BUILD_VERSION }}
         path: apk.zip
         if-no-files-found: warn
         overwrite: false
@@ -230,7 +230,7 @@ jobs:
     - name: Upload IPA Artifact
       uses: actions/upload-artifact@v4.3.4
       with:
-        name: ${{ PROJECT_NAME }}_IPA_V${{ BUILD_VERSION }}
+        name: ${{ env.PROJECT_NAME }}_IPA_V${{ env.BUILD_VERSION }}
         path: ipa.zip
         if-no-files-found: warn
         overwrite: false
