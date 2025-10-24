@@ -78,9 +78,11 @@ jobs:
           "$SDKMANAGER_PATH" --list | head -n 100
 
           # Use sdkmanager binary directly to avoid PATH timing issues
-          yes | "$SDKMANAGER_PATH" --sdk_root="$SDK_ROOT" --licenses
-          "$SDKMANAGER_PATH" --sdk_root="$SDK_ROOT" "platform-tools" "build-tools;34.0.0" "platforms;android-34"
-          
+          yes | "$SDKMANAGER_PATH" --sdk_root="$SDK_ROOT" --licenses || true
+          "$SDKMANAGER_PATH" --sdk_root="$SDK_ROOT" "platform-tools" "platforms;android-34" "build-tools;35.0.0"
+          yes | "$SDKMANAGER_PATH" --sdk_root="$SDK_ROOT" --licenses || true
+
+
           # Persist for subsequent steps
           echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> $GITHUB_ENV
           echo "PATH=$SDK_ROOT/cmdline-tools/latest/bin:$SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
