@@ -226,7 +226,7 @@ jobs:
         flet build ipa --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
     - name: Compress IPA artifact
-      run: zip -r ipa.zip build/ipa/<YourApp>.ipa
+      run: zip -r ipa.zip build/ipa/${{ github.repository }}.ipa
 
     - name: Upload IPA Artifact
       uses: actions/upload-artifact@v4.3.4
