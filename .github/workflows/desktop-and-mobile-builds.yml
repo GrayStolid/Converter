@@ -65,7 +65,7 @@ jobs:
         flet build linux --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
     - name: Compress Linux artifact
-      run: zip -r linux.zip build/linux/Converter.app
+      run: zip -r linux.zip build/linux
 
     - name: Upload Linux Artifact
       uses: actions/upload-artifact@v4.3.4
@@ -97,7 +97,7 @@ jobs:
         flet build macos --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
     - name: Compress macOS artifact
-      run: zip -r macOS.zip build/macos/Converter.app
+      run: zip -r macOS.zip build/macos/${{ github.repository }}.app
     
     - name: Upload macOS artifact
       uses: actions/upload-artifact@v4.3.4
@@ -129,7 +129,7 @@ jobs:
         flet build windows --verbose --no-rich-output --build-number=$env:BUILD_NUMBER --build-version=$env:BUILD_VERSION
 
     - name: Compress Windows artifact
-      run: Compress-Archive -Path build/windows/Converter.app -DestinationPath windows.zip
+      run: Compress-Archive -Path build/windows/${{ github.repository }}.exe -DestinationPath windows.zip
       shell: pwsh
       
     - name: Upload Windows Artifact
@@ -162,7 +162,7 @@ jobs:
         flet build aab --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
     - name: Compress AAB artifact
-      run: zip -r aab.zip build/aab/Converter.app
+      run: zip -r aab.zip build/aab/release.aab
       
     - name: Upload AAB Artifact
       uses: actions/upload-artifact@v4.3.4
@@ -194,7 +194,7 @@ jobs:
         flet build apk --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
     - name: Compress APK artifact
-      run: zip -r apk.zip build/apk/Converter.app
+      run: zip -r apk.zip build/apk/release.apk
       
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4.3.4
@@ -226,7 +226,7 @@ jobs:
         flet build ipa --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
     - name: Compress IPA artifact
-      run: zip -r ipa.zip build/ipa/Converter.app
+      run: zip -r ipa.zip build/ipa/<YourApp>.ipa
 
     - name: Upload IPA Artifact
       uses: actions/upload-artifact@v4.3.4
