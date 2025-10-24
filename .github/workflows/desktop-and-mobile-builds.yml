@@ -129,7 +129,8 @@ jobs:
         flet build windows --verbose --no-rich-output --build-number=$env:BUILD_NUMBER --build-version=$env:BUILD_VERSION
 
     - name: Compress Windows artifact
-      run: zip -r windows.zip build/windows
+      run: Compress-Archive -Path build/windows/* -DestinationPath windows.zip
+      shell: pwsh
       
     - name: Upload Windows Artifact
       uses: actions/upload-artifact@v4.3.4
