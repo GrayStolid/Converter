@@ -83,10 +83,17 @@ jobs:
           echo "PATH=$SDK_ROOT/cmdline-tools/latest/bin:$SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
       
         shell: bash
-        env:
-          GITHUB_WORKSPACE: ${{ github.workspace }}
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+        
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -95,6 +102,16 @@ jobs:
 
       - name: Accept Android licenses (verify)
         run: yes | flutter doctor --android-licenses || true
+        
+      - name: Cache Flutter packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
 
       - name: Get Flutter packages
         run: flutter pub get
@@ -119,3 +136,6 @@ jobs:
         with:
           name: flutter-apk-and-aars
           path: artifacts
+          
+      - name: Build APK (release)
+        run: flutter build apk --release --no-shrink -v
