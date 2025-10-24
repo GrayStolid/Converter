@@ -117,25 +117,30 @@ jobs:
           key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.yaml') }}
           restore-keys: |
             ${{ runner.os }}-flutter-
-
+            
       - name: Get Flutter packages
+        working-directory: flutter_app
         run: flutter pub get
-
+      
       - name: Build APK (debug)
+        working-directory: flutter_app
         run: flutter build apk --debug --no-shrink -v
-
+      
+      - name: Build APK (release)
+        working-directory: flutter_app
+        run: flutter build apk --release --no-shrink -v
+      
       - name: Collect APK and engine AARs
+        working-directory: flutter_app
         run: |
           mkdir -p artifacts
           cp build/app/outputs/flutter-apk/app-debug.apk artifacts/ || true
-          # Collect any .aar files produced in the Flutter engine cache
           if [ -d "$FLUTTER_ROOT/bin/cache/artifacts/engine" ]; then
             find "$FLUTTER_ROOT/bin/cache/artifacts/engine" -type f -name "*.aar" -print > aars_list.txt || true
             if [ -s aars_list.txt ]; then
               tar -czf artifacts/aars.tgz -T aars_list.txt || true
             fi
           fi
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
