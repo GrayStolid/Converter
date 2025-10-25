@@ -1,3 +1,6 @@
 ![Flet Logo](https://github.com/flet-dev/flet/raw/main/media/logo/flet-logo.svg)
 # flet builder
 Build Flet app and output *.exe, *.ipa, *.apk, *.aab and etc.
+
+## How to use it?!
+Just upload your python module(s) and your assets folder and run action in
