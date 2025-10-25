@@ -67,8 +67,11 @@ jobs:
       run: |
         flet build linux --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
+    - name: Show linux content
+      run: ls build/linux/*
+      
     - name: Compress Linux artifact
-      run: zip -r linux.zip build/linux/${{ env.REPO_NAME }}
+      run: zip -r linux build/linux/${{ env.REPO_NAME }}
 
     - name: Upload Linux Artifact
       uses: actions/upload-artifact@v4.3.4
@@ -99,8 +102,11 @@ jobs:
       run: |
         flet build macos --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
+    - name: Show macOS content
+      run: ls build/macos/*
+      
     - name: Compress macOS artifact
-      run: zip -r macOS.zip build/macos/${{ env.REPO_NAME }}.app
+      run: zip -r macOS build/macos/${{ env.REPO_NAME }}.app
     
     - name: Upload macOS artifact
       uses: actions/upload-artifact@v4.3.4
@@ -131,8 +137,12 @@ jobs:
       run: |
         flet build windows --verbose --no-rich-output --build-number=$env:BUILD_NUMBER --build-version=$env:BUILD_VERSION
 
+    - name: Show windows content
+      run: dir -Recurse ./build/windows
+      shell: pwsh
+      
     - name: Compress Windows artifact
-      run: Compress-Archive -Path build/windows/${{ env.REPO_NAME }}.exe -DestinationPath windows.zip
+      run: Compress-Archive -Path build/windows/${{ env.REPO_NAME }}.exe -DestinationPath windows
       shell: pwsh
       
     - name: Upload Windows Artifact
@@ -164,8 +174,11 @@ jobs:
       run: |
         flet build aab --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
+    - name: Show aab content
+      run: ls build/aab/*
+    
     - name: Compress AAB artifact
-      run: zip -r aab.zip build/aab/release.aab
+      run: zip -r aab build/aab/release.aab
       
     - name: Upload AAB Artifact
       uses: actions/upload-artifact@v4.3.4
@@ -196,8 +209,11 @@ jobs:
       run: |
         flet build apk --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
+    - name: Show apk content
+      run: ls build/apk/*
+    
     - name: Compress APK artifact
-      run: zip -r apk.zip build/apk/release.apk
+      run: zip -r apk build/apk/release.apk
       
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4.3.4
@@ -228,8 +244,11 @@ jobs:
       run: |
         flet build ipa --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
+    - name: Show ipa content
+      run: ls build/ipa/*
+    
     - name: Compress IPA artifact
-      run: zip -r ipa.zip build/ipa/${{ env.REPO_NAME }}.ipa
+      run: zip -r ipa build/ipa/${{ env.REPO_NAME }}.ipa
 
     - name: Upload IPA Artifact
       uses: actions/upload-artifact@v4.3.4
