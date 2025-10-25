@@ -1,2 +1,0 @@
-F:/Projects/Python/Learning/Flet/SendCoordinate/build/flutter/android/app/.cxx/RelWithDebInfo/3w4q446r/x86_64/CMakeFiles/edit_cache.dir
-F:/Projects/Python/Learning/Flet/SendCoordinate/build/flutter/android/app/.cxx/RelWithDebInfo/3w4q446r/x86_64/CMakeFiles/rebuild_cache.dir

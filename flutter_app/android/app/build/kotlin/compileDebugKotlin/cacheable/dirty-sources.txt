@@ -1,1 +1,0 @@
-F:\Projects\Python\Learning\Flet\SendCoordinate\build\flutter\android\app\src\main\kotlin\com\mycompany\sendcoordinate\MainActivity.kt
