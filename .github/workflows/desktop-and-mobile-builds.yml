@@ -100,17 +100,17 @@ jobs:
       run: |
         flet build macos --verbose --clear-cache --cleanup-app --cleanup-packages --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
-    - name: Show macOS content
-      run: ls -R
+    #- name: Show macOS content
+    #  run: ls -R
       
-    #- name: Compress macOS artifact
-    #  run: zip -r macOS build/macos
+    - name: Compress macOS artifact
+      run: zip -9 -r macOS build/macos
     
     - name: Upload macOS artifact
       uses: actions/upload-artifact@v4.3.4
       with:
         name: ${{ env.PROJECT_NAME }}_macOS_v${{ env.BUILD_VERSION }}
-        path: build/macos
+        path: macOS
         if-no-files-found: warn
         overwrite: true
         compression-level: 9
