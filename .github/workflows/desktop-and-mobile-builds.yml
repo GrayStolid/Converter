@@ -110,7 +110,7 @@ jobs:
       uses: actions/upload-artifact@v4.3.4
       with:
         name: ${{ env.PROJECT_NAME }}_macOS_arm64_v${{ env.BUILD_VERSION }}
-        path: build/products/release
+        path: build/macos
         if-no-files-found: warn
         overwrite: true
         compression-level: 9
