@@ -8,7 +8,8 @@ authors = [
     { name = "Raoyat", email = "slipknotstolid@gmail.com" }
 ]
 dependencies = [
-  "flet==0.28.3"
+  "flet",
+  "certifi"
 ]
 
 [tool.flet]
@@ -25,15 +26,6 @@ company = "Flet"
 
 # copyright text to display in about app dialogs
 copyright = "Copyright (C) 2025 by Flet"
-
-[dependency-groups]
-dev=["flet[all]==0.28.3"]
-
-[tool.poetry]
-package-mode = false
-
-[tool.poetry.group.dev.dependencies]
-flet = {extras = ["all"], version = "0.28.3"}
 
 [tool.flet.android]
 min_sdk_version = 24
