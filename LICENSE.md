@@ -1,7 +1,7 @@
 # Creator-Retention License (CRL)
 
 **Version 1.0 — October 2025**  
-**Author:** Stolid
+**Author:** GrayStolid
 
 ---
 
