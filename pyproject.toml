@@ -1,7 +1,7 @@
 [project]
 name = "CoordinateSender"
 version = "0.1.0"
-description = ""
+description = "App for sending location to server."
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [
@@ -22,13 +22,11 @@ org = "com.StoliDevs"
 product = "CoordinateSender"
 
 # company name to display in about app dialogs
-company = "Flet"
+company = "StoliDevs"
 
 # copyright text to display in about app dialogs
 copyright = "Copyright (C) 2025 by Flet"
 
-[tool.flet.macos]
-build_arch = "arm64"
 
 [tool.flet.android]
 min_sdk_version = 24
