@@ -1,5 +1,5 @@
 ![Flet Logo](https://github.com/flet-dev/flet/raw/main/media/logo/flet-logo.svg)
-# flet builder
+# Flet Builder
 Build Flet app and output *.exe, *.ipa, *.apk, *.aab and etc.
 
 ## How to use it?!
