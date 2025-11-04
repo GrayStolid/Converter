@@ -100,8 +100,8 @@ jobs:
       run: |
         flet build macos --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
-    #- name: Show macOS content
-    #  run: ls -R
+    - name: Show macOS content
+      run: ls -R
       
     #- name: Compress macOS artifact
     #  run: zip -r macOS build/macos
