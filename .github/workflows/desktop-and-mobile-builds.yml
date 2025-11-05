@@ -96,22 +96,30 @@ jobs:
         python -m pip install --upgrade pip
         pip install flet-cli==$FLET_CLI_VERSION
 
-    - name: Flet Build macOS (Optimized)
+    - name: Flet Build macOS
       run: |
-        flet build macos \
-          --verbose \
-          --build-number=$BUILD_NUMBER \
-          --build-version=$BUILD_VERSION \
-          --no-include-python \
-          --no-include-pip-packages \
-          --optimize-size
-      # Remove the --clear-cache and --cleanup-app flags as they might be causing issues
-      
-    - name: Show build size before compression
+        flet build macos --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
+  
+    - name: Post-build optimization for macOS
       run: |
+        # Remove unnecessary files to reduce bundle size
+        find build/macos -name "*.pyc" -delete
+        find build/macos -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+        find build/macos -name "*.a" -delete
+        find build/macos -name "*.o" -delete
+        
+        # Remove debug symbols if they exist
+        find build/macos -name "*.dSYM" -type d -exec rm -rf {} + 2>/dev/null || true
+        
+        # Remove test files and documentation
+        find build/macos -name "*test*" -type f -delete
+        find build/macos -name "*Test*" -type f -delete
+        find build/macos -name "*.txt" -type f -delete
+        find build/macos -name "*.md" -type f -delete
+        
+        # Check the size after cleanup
         du -sh build/macos
-        find build/macos -type f -name "*.dSYM" -exec rm -rf {} + 2>/dev/null || true
-
+        
     - name: Show macOS content
       run: ls -R
       
