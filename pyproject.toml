@@ -27,6 +27,14 @@ company = "StoliDevs"
 # copyright text to display in about app dialogs
 copyright = "Copyright (C) 2025 by Flet"
 
+# Add macOS-specific optimizations
+[tool.flet.macos]
+bundle_identifier = "com.StoliDevs.CoordinateSender"
+min_system_version = "10.13"
+
+# Optimize the build
+include_python = false
+include_pip_packages = false
 
 [tool.flet.android]
 min_sdk_version = 24
