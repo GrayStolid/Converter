@@ -100,11 +100,11 @@ jobs:
       run: |
         flet build macos --verbose --clear-cache --cleanup-app --cleanup-packages --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
 
-    #- name: Show macOS content
-    #  run: ls -R
+    - name: Show macOS content
+      run: ls -R
       
     - name: Compress macOS artifact
-      run: zip -9 -r macOS build/macos
+      run: zip -9 -r macOS build/macos/*.app
     
     - name: Upload macOS artifact
       uses: actions/upload-artifact@v4.3.4
