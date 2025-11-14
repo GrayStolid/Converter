@@ -9,7 +9,9 @@ authors = [
 ]
 dependencies = [
   "flet",
-  "certifi"
+  "certifi",
+  "asyncio",
+  "websockets"
 ]
 
 [tool.flet]
